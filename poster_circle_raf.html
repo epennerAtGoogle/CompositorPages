@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- saved from url=(0066)https://www.webkit.org/blog-files/3d-transforms/poster-circle.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Poster Circle</title>
+    
+    <meta name="viewport" content="initial-scale=0.60, minimum-scale=0.60, maximum-scale=0.60">
+    <style type="text/css">
+
+      body {
+        font-family: 'Lucida Grande', Verdana, Arial;
+        font-size: 12px;
+      }
+
+      #stage {
+        margin: 150px auto;
+        width: 600px;
+        height: 400px;
+        /*
+        Setting the perspective of the contents of the stage
+        but not the stage itself
+        */
+        -webkit-perspective: 800;
+      }
+
+      #rotate {
+        margin: 0 auto;
+        width: 600px;
+        height: 400px;
+        /* Ensure that we're in 3D space */
+        -webkit-transform-style: preserve-3d;
+      }
+
+      .ring {
+        margin: 0 auto;
+        height: 110px;
+        width: 600px;
+        -webkit-transform-style: preserve-3d;
+      }
+      
+      .ring > :nth-child(odd) {
+        background-color: #995C7F;
+      }
+
+      .ring > :nth-child(even) {
+        background-color: #835A99;
+      }
+
+      .poster {
+        position: absolute;
+        left: 250px;
+        width: 100px;
+        height: 100px;
+        opacity: 0.7;
+        color: rgba(0,0,0,0.9);
+        -webkit-border-radius: 10px;
+      }
+      
+      .poster > p {
+        font-family: 'Georgia', serif;
+        font-size: 36px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 28px;
+      }
+    </style>
+
+    <script type="text/javascript">
+
+      const POSTERS_PER_ROW = 12;
+      const RING_RADIUS = 200;
+
+      function setup_posters (row)
+      {
+        var posterAngle = 360 / POSTERS_PER_ROW;
+        for (var i = 0; i < POSTERS_PER_ROW; i ++) {
+          var poster = document.createElement('div');
+          poster.className = 'poster';
+          // compute and assign the transform for this poster
+          var transform = 'rotateY(' + (posterAngle * i) + 'deg) translateZ(' + RING_RADIUS + 'px)';
+          poster.style.webkitTransform = transform;
+          // setup the number to show inside the poster
+          var content = poster.appendChild(document.createElement('p'));
+          content.textContent = i;
+          // add the poster to the row
+          row.appendChild(poster);
+        }
+
+      }
+
+      function init ()
+      {
+        setup_posters(document.getElementById('ring-1'));
+        setup_posters(document.getElementById('ring-2'));
+        setup_posters(document.getElementById('ring-3'));
+      }
+
+      function rotate(axis, element, degrees)
+      {
+        var transform = 'rotate' + axis +'(' + degrees + 'deg)';
+        element.style.webkitTransform = transform;
+      }
+
+      function animate(timestamp)
+      {
+        var seconds = timestamp / 1000;
+        rotate('Y', document.getElementById('ring-1'), (seconds / 5) *  360.0);
+        rotate('Y', document.getElementById('ring-2'), (seconds / 4) * -360.0);
+        rotate('Y', document.getElementById('ring-3'), (seconds / 3) *  360.0);
+        rotate('X', document.getElementById('rotate'), (seconds / 7) *  360.0);
+        window.requestAnimationFrame(animate);
+      }
+
+      // call init once the document is fully loaded
+      window.addEventListener('load', init, false);
+      window.requestAnimationFrame(animate);
+
+    </script>
+  </head>
+  
+  <body>
+
+    <h1>RAF Poster Circle</h1>
+    <p>This version uses javascript and requestAnimationFrame.</p>
+
+    <div id="stage">
+      <div id="rotate">
+        <div id="ring-1" class="ring"></div>
+        <div id="ring-2" class="ring"></div>
+        <div id="ring-3" class="ring"></div>
+      </div>
+    </div>
+  </body>
+</html>
